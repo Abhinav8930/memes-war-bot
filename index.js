@@ -333,6 +333,20 @@ async function processAccount(queryId) {
   }
 
   await setReferralCode(queryId, userInfo);
+  
+  // Check if rewards are available
+  const rewardsData = await checkRewards(queryId);
+  
+  if (rewardsData && rewardsData.leftSecondsUntilTreasury === 0) {
+    const rewardsToClaim = {
+      rewards: rewardsData.rewards,
+      leftSecondsUntilTreasury: 3600,
+      rewardCooldownSeconds: 3600
+    };
+    await claimRewards(queryId, rewardsToClaim);
+  } else {
+    console.log('Rewards not available yet. Try again later.');
+  }
 
   // Fetch quests using the queryId directly
   const quests = await getQuestList(queryId); // Pass queryId directly to getQuestList

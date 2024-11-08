@@ -44,7 +44,7 @@ To get started with this bot, follow these steps:
 4. **Run the Bot**:
 
    ```bash
-   node bot.js
+   node index.js
    ```
 
 ## Configuration

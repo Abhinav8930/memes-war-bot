@@ -116,7 +116,7 @@ async function donateWarbondToGuild(queryId, warbondTokens) {
     };
     const payload = {
       guildId: guildId,
-      warbondCount: warbondTokens
+      warbondCount: warbondTokens-1000
     };
     const response = await axios.post('https://memes-war.memecore.com/api/guild/warbond', payload, { headers });
     if (response.data && response.data.data === null) {
@@ -333,6 +333,23 @@ async function processAccount(queryId) {
   }
 
   await setReferralCode(queryId, userInfo);
+  
+  // Check-in functionality
+const checkInData = await getCheckInData(queryId);
+if (checkInData && checkInData.checkInRewards) {
+  const claimableReward = checkInData.checkInRewards.find(reward => reward.status === 'CLAIMABLE');
+  if (claimableReward) {
+    const rewardDetails = claimableReward.rewards
+      .map(reward => `${reward.rewardAmount} ${reward.rewardType}`)
+      .join(', ');
+
+    console.log(chalk.blue(`Check In Day ${claimableReward.consecutiveDays} Success, Reward: ${rewardDetails}`));
+    await checkIn(queryId, claimableReward.consecutiveDays, claimableReward.rewards);
+  } else {
+    console.log(chalk.yellow('You already checkin today.'));
+  }
+}
+
   
   // Check if rewards are available
   const rewardsData = await checkRewards(queryId);

@@ -109,6 +109,13 @@ async function claimRewards(queryId, rewards) {
 
 async function donateWarbondToGuild(queryId, warbondTokens) {
   try {
+	  const remainingWarbonds = warbondTokens - 1000;
+
+    // Skip donation if remaining warbonds are 0
+    if (remainingWarbonds === 0) {
+      console.log(chalk.yellow('Skipping donation as remaining warbonds are 0.'));
+      return;
+    }
     const encodedQueryId = encodeURIComponent(queryId);
     const headers = {
       Cookie: `telegramInitData=${encodedQueryId}`,
